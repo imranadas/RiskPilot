@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS ai_analysis (
   suggested_credit_limit NUMERIC(14, 2),
   next_actions           JSONB DEFAULT '[]',
   -- Meta
-  model_used             TEXT DEFAULT 'gemini-1.5-flash-8b',
+  model_used             TEXT DEFAULT 'gemini-2.0-flash-lite',
   created_at             TIMESTAMPTZ DEFAULT NOW()
 );
 
