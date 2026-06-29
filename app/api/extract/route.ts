@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
   try {
     extracted = await extractCreditData(pdfResult.text);
   } catch (err) {
-    console.error("[extract] gemini error:", err);
+    console.error("[extract] ai error:", err);
     return fail("AI extraction failed. Please try again.");
   }
 

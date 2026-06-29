@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
   try {
     analysis = await analyzeCreditData(input);
   } catch (err) {
-    console.error("[analyze] gemini error:", err);
+    console.error("[analyze] ai error:", err);
     await failReport("AI analysis failed");
     return NextResponse.json(
       { error: "AI analysis failed. Please try again." },

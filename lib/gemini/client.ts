@@ -1,34 +1,15 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 
-let _client: GoogleGenerativeAI | null = null;
+let _client: Groq | null = null;
 
-function getClient(): GoogleGenerativeAI {
+export function getGroqClient(): Groq {
   if (!_client) {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) throw new Error("GEMINI_API_KEY environment variable is not set");
-    _client = new GoogleGenerativeAI(apiKey);
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) throw new Error("GROQ_API_KEY environment variable is not set");
+    _client = new Groq({ apiKey });
   }
   return _client;
 }
 
-// Low temperature for deterministic JSON extraction
-export function getExtractionModel() {
-  return getClient().getGenerativeModel({
-    model: "gemini-2.0-flash-lite",
-    generationConfig: {
-      responseMimeType: "application/json",
-      temperature: 0.1,
-    },
-  });
-}
-
-// Slightly higher temperature for nuanced risk analysis prose
-export function getAnalysisModel() {
-  return getClient().getGenerativeModel({
-    model: "gemini-2.0-flash-lite",
-    generationConfig: {
-      responseMimeType: "application/json",
-      temperature: 0.2,
-    },
-  });
-}
+export const EXTRACTION_MODEL = "llama-3.3-70b-versatile";
+export const ANALYSIS_MODEL   = "llama-3.3-70b-versatile";
