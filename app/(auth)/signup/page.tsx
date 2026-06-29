@@ -48,7 +48,8 @@ export default function SignupPage() {
     });
 
     if (error) {
-      setError(error.message);
+      console.error("Signup error:", error);
+      setError(error.message || error.name || "Sign-up failed. Check your Supabase URL and anon key in .env.local.");
       setLoading(false);
       return;
     }

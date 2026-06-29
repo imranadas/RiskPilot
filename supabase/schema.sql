@@ -16,10 +16,10 @@ CREATE TABLE IF NOT EXISTS profiles (
 );
 
 -- Auto-create a profile row whenever a new user signs up
-CREATE OR REPLACE FUNCTION handle_new_user()
+CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO profiles (id, email, full_name)
+  INSERT INTO public.profiles (id, email, full_name)
   VALUES (
     NEW.id,
     NEW.email,
@@ -28,7 +28,7 @@ BEGIN
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
@@ -148,10 +148,16 @@ ALTER TABLE extracted_data   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ai_analysis      ENABLE ROW LEVEL SECURITY;
 
 -- Profiles
+DROP POLICY IF EXISTS "Users can view own profile"   ON profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
+DROP POLICY IF EXISTS "Service role can insert profile" ON profiles;
 CREATE POLICY "Users can view own profile"
   ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE USING (auth.uid() = id);
+-- Allows the handle_new_user trigger (SECURITY DEFINER) to insert new rows
+CREATE POLICY "Service role can insert profile"
+  ON profiles FOR INSERT WITH CHECK (true);
 
 -- Reports
 CREATE POLICY "Users manage own reports"
