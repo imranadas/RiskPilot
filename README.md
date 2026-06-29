@@ -1,4 +1,4 @@
-# RiskPilot — AI Credit Report Analysis
+# RiskPilot — AI Credit Report Analysis 🚀
 
 Upload a CIBIL, Experian, Equifax, or CRIF credit bureau report and receive a structured, explainable risk assessment in under 30 seconds — powered by Groq (Llama 3.3 70B).
 
