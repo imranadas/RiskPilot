@@ -1,11 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Tell Next.js to use native Node.js require() for pdf-parse instead of
-  // bundling it through Webpack — avoids the test-file preloading side-effect.
-  serverExternalPackages: ["pdf-parse"],
+  experimental: {
+    // Prevent webpack from bundling pdf-parse — it reads test files on init
+    // which breaks when bundled. Uses native Node.js require() instead.
+    serverComponentsExternalPackages: ["pdf-parse"],
+  },
 
   webpack: (config) => {
-    // Stub Node builtins for the browser bundle (client components, etc.)
+    // Stub Node builtins for the browser bundle
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,

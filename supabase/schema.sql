@@ -114,7 +114,9 @@ CREATE TABLE IF NOT EXISTS ai_analysis (
 -- ============================================================
 -- ANALYSIS HISTORY VIEW (convenience join used by the frontend)
 -- ============================================================
-CREATE OR REPLACE VIEW analysis_history AS
+CREATE OR REPLACE VIEW analysis_history
+  WITH (security_invoker = true)
+AS
 SELECT
   r.id                  AS report_id,
   r.user_id,
