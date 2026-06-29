@@ -261,7 +261,7 @@ function ReportRow({
       {/* Confidence */}
       <TableCell className="text-center tabular-nums text-sm">
         {report.confidence_score != null ? (
-          `${report.confidence_score}%`
+          `${report.confidence_score <= 1 ? Math.round(report.confidence_score * 100) : Math.round(report.confidence_score)}%`
         ) : (
           <span className="text-muted-foreground">—</span>
         )}

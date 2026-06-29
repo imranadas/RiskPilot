@@ -24,4 +24,5 @@ next-env.d.ts
 
 # test / sample files — not for production
 test-credit-report.html
+test-reports/
 *.pdf

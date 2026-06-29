@@ -18,12 +18,20 @@ Required JSON schema (use null for any field that cannot be found):
   "active_loans":       number | null,
   "outstanding_balance":number | null,
   "loan_types":         string[] | null,
+  "loan_breakdown":     { [loanType: string]: number } | null,
   "emi_obligations":    number | null,
   "missed_payments":    number | null,
   "credit_utilization": number | null,
   "account_age_months": number | null,
   "hard_inquiries":     number | null
 }
+
+For "loan_breakdown": extract the ACTUAL outstanding balance for each loan type found in the report.
+Example: { "Home Loan": 5240000, "Credit Card": 48000, "Car Loan": 1000000 }
+CRITICAL: All values must be plain pre-computed numbers — NO arithmetic expressions like "118000 + 61000".
+If a credit card has two balances (e.g. 118000 and 61000), sum them yourself and write 179000.
+If individual balances are not listed in the report, return null for loan_breakdown.
+The sum of loan_breakdown values should approximately equal outstanding_balance.
 
 Credit Report Text:
 ---
@@ -34,6 +42,8 @@ function cleanJson(raw: string): string {
   return raw
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/\s*```$/i, "")
+    // Evaluate simple arithmetic expressions in JSON values: 118000 + 61000 → 179000
+    .replace(/:\s*(\d+(?:\.\d+)?)\s*\+\s*(\d+(?:\.\d+)?)/g, (_, a, b) => `: ${parseFloat(a) + parseFloat(b)}`)
     .trim();
 }
 

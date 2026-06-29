@@ -38,6 +38,7 @@ export interface ExtractedData {
   active_loans: number;
   outstanding_balance: number;
   loan_types: string[];
+  loan_breakdown: Record<string, number> | null;
   emi_obligations: number;
   missed_payments: number;
   credit_utilization: number | null;
@@ -130,6 +131,7 @@ export interface GeminiExtraction {
   active_loans: number | null;
   outstanding_balance: number | null;
   loan_types: string[] | null;
+  loan_breakdown: Record<string, number> | null;
   emi_obligations: number | null;
   missed_payments: number | null;
   credit_utilization: number | null;

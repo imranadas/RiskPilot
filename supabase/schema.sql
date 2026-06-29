@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS extracted_data (
   active_loans         INTEGER DEFAULT 0,
   outstanding_balance  NUMERIC(14, 2) DEFAULT 0,
   loan_types           JSONB DEFAULT '[]',
+  loan_breakdown       JSONB DEFAULT NULL,
   emi_obligations      NUMERIC(12, 2) DEFAULT 0,
   -- Behavior
   missed_payments      INTEGER DEFAULT 0,

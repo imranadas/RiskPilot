@@ -35,6 +35,12 @@ export default async function ReportDetailPage({ params }: { params: { id: strin
 
   if (!report) notFound();
 
+  // Normalize confidence score: DB may store 0-1 decimal from early LLM responses
+  function normalizeConfidence(score: number | null): number | null {
+    if (score == null) return null;
+    return score <= 1 ? Math.round(score * 100) : Math.round(score);
+  }
+
   const [{ data: extracted }, { data: analysis }] = await Promise.all([
     service.from("extracted_data").select("*").eq("report_id", params.id).maybeSingle(),
     service.from("ai_analysis").select("*").eq("report_id", params.id).maybeSingle(),
@@ -160,7 +166,7 @@ export default async function ReportDetailPage({ params }: { params: { id: strin
                   <RiskBadge category={analysis.risk_category} size="xl" />
                   <div className="text-right">
                     <p className="text-3xl font-bold tabular-nums">
-                      {analysis.confidence_score ?? "—"}<span className="text-base font-normal text-muted-foreground">%</span>
+                      {normalizeConfidence(analysis.confidence_score) ?? "—"}<span className="text-base font-normal text-muted-foreground">%</span>
                     </p>
                     <p className="text-xs text-muted-foreground">confidence</p>
                   </div>
@@ -169,7 +175,7 @@ export default async function ReportDetailPage({ params }: { params: { id: strin
 
               <LendingDecision
                 decision={analysis.recommended_decision}
-                confidence={analysis.confidence_score}
+                confidence={normalizeConfidence(analysis.confidence_score)}
                 suggestedLimit={analysis.suggested_credit_limit}
               />
               <AIInsightsPanel
@@ -213,7 +219,11 @@ export default async function ReportDetailPage({ params }: { params: { id: strin
             <Card>
               <CardHeader><CardTitle className="text-sm font-medium uppercase tracking-wide text-muted-foreground">Debt Breakdown</CardTitle></CardHeader>
               <CardContent>
-                <DebtBreakdownTable loanTypes={loanTypes} totalOutstanding={extracted.outstanding_balance} />
+                <DebtBreakdownTable
+                  loanTypes={loanTypes}
+                  totalOutstanding={extracted.outstanding_balance}
+                  loanBreakdown={extracted.loan_breakdown}
+                />
               </CardContent>
             </Card>
           )}

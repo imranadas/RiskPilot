@@ -10,7 +10,7 @@ Return ONLY valid JSON — no markdown, no code fences, no explanation.
 Required JSON schema:
 {
   "risk_category":          "Low Risk" | "Medium Risk" | "High Risk",
-  "confidence_score":       number,
+  "confidence_score":       number,   // integer 0-100 representing percentage confidence
   "positive_indicators":    string[],
   "negative_indicators":    string[],
   "risk_factors":           string[],
@@ -63,6 +63,11 @@ export async function analyzeCreditData(data: GeminiExtraction): Promise<GeminiA
 
   if (!validRisk.includes(parsed.risk_category)) parsed.risk_category = "Medium Risk";
   if (!validDecision.includes(parsed.recommended_decision)) parsed.recommended_decision = "Review";
+
+  // Normalize confidence: LLMs sometimes return 0-1 decimal instead of 0-100
+  if (parsed.confidence_score != null && parsed.confidence_score <= 1) {
+    parsed.confidence_score = Math.round(parsed.confidence_score * 100);
+  }
 
   return parsed;
 }
