@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, ExternalLink, AlertTriangle, Upload } from "lucide-react";
+import { Trash2, ExternalLink, AlertTriangle, Upload, Search } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -22,6 +22,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { RiskBadge } from "@/components/analysis/RiskBadge";
 import { useToast } from "@/hooks/use-toast";
 import { cn, formatDate } from "@/lib/utils";
@@ -43,13 +44,20 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
   const { toast } = useToast();
   const [reports, setReports] = useState<AnalysisHistoryRow[]>(initialReports);
   const [statusFilter, setStatusFilter] = useState<ReportStatus | "all">("all");
+  const [search, setSearch] = useState("");
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const filtered =
-    statusFilter === "all"
-      ? reports
-      : reports.filter((r) => r.status === statusFilter);
+  const filtered = reports
+    .filter((r) => statusFilter === "all" || r.status === statusFilter)
+    .filter((r) => {
+      if (!search.trim()) return true;
+      const q = search.toLowerCase();
+      return (
+        r.customer_name?.toLowerCase().includes(q) ||
+        r.file_name?.toLowerCase().includes(q)
+      );
+    });
 
   async function handleDelete() {
     if (!pendingDeleteId) return;
@@ -100,22 +108,34 @@ export function ReportsTable({ initialReports }: ReportsTableProps) {
 
   return (
     <div className="space-y-4">
-      {/* Status filter tabs */}
-      <div className="flex gap-1 rounded-lg bg-card/60 p-1 w-fit border border-border">
-        {STATUS_TABS.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => setStatusFilter(tab.value)}
-            className={cn(
-              "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-              statusFilter === tab.value
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Search + filter bar */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex gap-1 rounded-lg bg-card/60 p-1 w-fit border border-border">
+          {STATUS_TABS.map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => setStatusFilter(tab.value)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                statusFilter === tab.value
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search by name or file…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-8 h-9 text-sm"
+          />
+        </div>
       </div>
 
       {/* Empty filtered state */}

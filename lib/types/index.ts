@@ -21,6 +21,7 @@ export interface UploadedReport {
   report_type: string;
   status: ReportStatus;
   error_message: string | null;
+  notes: string | null;
   created_at: string;
   updated_at: string;
 }

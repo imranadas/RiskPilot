@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS uploaded_reports (
   status        TEXT DEFAULT 'uploaded'
     CHECK (status IN ('uploaded', 'processing', 'completed', 'failed')),
   error_message TEXT,
+  notes         TEXT,
   created_at    TIMESTAMPTZ DEFAULT NOW(),
   updated_at    TIMESTAMPTZ DEFAULT NOW()
 );

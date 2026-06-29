@@ -45,6 +45,29 @@ export async function DELETE(
   return NextResponse.json({ success: true });
 }
 
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await request.json().catch(() => ({}));
+  const notes: string = typeof body.notes === "string" ? body.notes.slice(0, 2000) : "";
+
+  const service = createServiceClient();
+
+  const { error } = await service
+    .from("uploaded_reports")
+    .update({ notes, updated_at: new Date().toISOString() })
+    .eq("id", params.id)
+    .eq("user_id", user.id);
+
+  if (error) return NextResponse.json({ error: "Failed to save notes" }, { status: 500 });
+  return NextResponse.json({ success: true });
+}
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: { id: string } }

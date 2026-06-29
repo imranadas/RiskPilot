@@ -46,3 +46,19 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+@media print {
+  /* Force white background for print */
+  body, .bg-background, [class*="bg-card"], [class*="bg-muted"] {
+    background: white !important;
+    color: #111 !important;
+  }
+  /* Hide nav chrome */
+  nav, aside, header, .print\:hidden { display: none !important; }
+  /* Expand content to full width */
+  main { padding: 0 !important; margin: 0 !important; }
+  /* Keep cards visible but plain */
+  .border, [class*="border-"] { border-color: #ccc !important; }
+  /* Avoid page breaks inside cards */
+  .card, [class*="rounded-"] { break-inside: avoid; }
+}
