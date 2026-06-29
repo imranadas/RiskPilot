@@ -69,6 +69,7 @@ export async function POST(request: NextRequest) {
     active_loans: extracted.active_loans,
     outstanding_balance: extracted.outstanding_balance,
     loan_types: extracted.loan_types,
+    loan_breakdown: extracted.loan_breakdown ?? null,
     emi_obligations: extracted.emi_obligations,
     missed_payments: extracted.missed_payments,
     credit_utilization: extracted.credit_utilization,
