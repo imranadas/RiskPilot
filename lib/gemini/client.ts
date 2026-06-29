@@ -14,7 +14,7 @@ function getClient(): GoogleGenerativeAI {
 // Low temperature for deterministic JSON extraction
 export function getExtractionModel() {
   return getClient().getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.0-flash",
     generationConfig: {
       responseMimeType: "application/json",
       temperature: 0.1,
@@ -25,7 +25,7 @@ export function getExtractionModel() {
 // Slightly higher temperature for nuanced risk analysis prose
 export function getAnalysisModel() {
   return getClient().getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.0-flash",
     generationConfig: {
       responseMimeType: "application/json",
       temperature: 0.2,
